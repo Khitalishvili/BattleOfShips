@@ -1,0 +1,18 @@
+@charset utf-8;
+
+.header h1
+{
+color:grey;
+background-color:#00CC00;
+}
+.nav ul
+{
+color:#FFFF00;
+background-color:blue;
+
+}
+
+.nav ul li
+{
+
+}
