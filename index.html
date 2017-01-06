@@ -1,61 +1,337 @@
-<?DOCTYPE HTML>
+<!DOCTYPE Html>
 <html>
 <head>
-<title>My web design project</title>
-<meta name="Author" content="Zakaria Khitalishvili">
-<meta name="Description" content="Description about this web design project">
-<meta name="Keywords" content="">
-<meta name="Reply-to" content="zakro1996@gmail.com">
-<link rel="icon" href="xml2.ico" type="image/gif">
-<meta charset="UTF-8">
-<link rel="stylesheet" href="stylesheet.css" type="text/css">
+<meta author="Zakaria Khitalishvili">
+<title>Battle of Ships</title>
+<link rel="stylesheet" type="text/css" href="style.css">
+<script src="jquery-3.1.1.min.js"></script>
+<script src="code.js"></script>
 </head>
 <body>
-<div class="header">
-<h1>My Web Design Project</h1>
-<h6>This is just a test version</h6>
+<div id="main">
+  <div id="control_myTable">
+  <div id="control">
+    <button id="startButton">
+      Start Game
+    </button>
+    <button id="resetButton">
+      Reset Game
+    </button>
+    <div id="messageDiv">
+      <div id="textDiv">
+      </div>
+      <div id="ships">
+
+      </div>
+    </div>
+    <button id="rotate">
+      Rotate
+    </button>
+    <button id="auto">
+      Auto
+    </button>
+  </div>
+  <div id="tablediv">
+    <div id="legendTable">
+      <span>Your fleet</span>
+    </div>
+    <table id="myTable">
+      <tr>
+        <th></th>
+        <th>A</th>
+        <th>B</th>
+        <th>C</th>
+        <th>D</th>
+        <th>E</th>
+        <th>F</th>
+        <th>G</th>
+        <th>H</th>
+        <th>I</th>
+        <th>J</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>4</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>5</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>6</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>7</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>8</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>9</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>10</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
+  </div>
+  <div id="Ctablediv">
+    <div id="legendETable">
+      <span>Computer's fleet</span>
+    </div>
+    <table id="enemyTable">
+      <tr>
+        <th></th>
+        <th>A</th>
+        <th>B</th>
+        <th>C</th>
+        <th>D</th>
+        <th>E</th>
+        <th>F</th>
+        <th>G</th>
+        <th>H</th>
+        <th>I</th>
+        <th>J</th>
+      </tr>
+      <tr>
+        <th>1</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>2</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>3</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>4</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>5</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>6</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>7</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>8</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>9</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>10</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </table>
+  </div>
 </div>
-<hr align="center">
-<div class="nav" align="justify">
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="content.html">Content</a></li>
-<li><a href="about.html">About us</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul>
-</div>
-<hr>
-<div class="main" >
-<p><img src="picture.jpg" alt="main picture"><br>&lari
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam ac metus vel nunc ultricies finibus. Etiam lobortis, dui a varius vehicula, lacus mauris mollis quam, sit amet iaculis quam orci ac metus. Aenean fermentum consequat lacus nec viverra. Integer vitae quam accumsan, porta nibh sit amet, congue enim. Mauris euismod sed sem dapibus rhoncus. Pellentesque vulputate enim sed turpis ullamcorper dapibus. Praesent porttitor sapien in purus dignissim finibus. Duis sagittis lobortis tellus ac vehicula. Proin sagittis malesuada porta. Nunc sapien sem, commodo at nisi sed, eleifend imperdiet sapien.
-
-Aliquam erat volutpat. Proin auctor, tortor et egestas pretium, purus nibh imperdiet dui, eget ornare lectus urna et lorem. Mauris ut massa quam. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nulla at aliquet purus. Sed sed metus urna. Morbi id augue in libero condimentum finibus non id turpis. Fusce condimentum leo eget congue scelerisque. Integer auctor mi eget sem posuere suscipit. Donec et risus pulvinar, fringilla dolor eu, aliquam quam. Donec ullamcorper magna non lorem dictum, eu tincidunt eros feugiat. Proin ante urna, iaculis vel odio eget, porttitor interdum mauris.
-
-Vestibulum a elit id nibh gravida pharetra. Pellentesque auctor massa vitae luctus pulvinar. Proin sit amet varius lorem, vitae scelerisque erat. Pellentesque suscipit euismod urna sit amet viverra. Pellentesque sem arcu, pretium sit amet gravida eu, imperdiet at purus. In fermentum tellus eu vulputate mattis. Sed nec turpis ipsum. </p>
-</div>
- <img src="http://www.w3schools.com/images/w3schools_green.jpg" alt="W3Schools.com"> 
-<button onclick="getLocation()">Try It</button>
-
-<p id="demo"></p>
-
-<script>
-var x = document.getElementById("demo");
-
-function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(showPosition);
-    } else { 
-        x.innerHTML = "Geolocation is not supported by this browser.";
-    }
-}
-
-function showPosition(position) {
-    x.innerHTML = "Latitude: " + position.coords.latitude + 
-    "<br>Longitude: " + position.coords.longitude;	
-}
-</script>
-
 </body>
-<footer>All rights reserved<br>&copy2016</footer>
 </html>
