@@ -150,117 +150,7 @@ function isShotValTable(col,row)
     }
   }
  }
-function ifShipDestroyed(col,row,table)
- { 
-  var counter=0;///counts survived parts of ships
-  var size=0;
-  var i=1;
-  var headCol=col;
-  var headRow=row;
 
-  //horizontally checking for ships parts
-  while(isValidCell(col+i,row))
-  {
-    if(table[col+i-1][row-1]==2 & table[col+i-1][row-1]==4 )
-      break;
-   if(table[col+i-1][row-1]!=3)
-    {
-        counter++;
-    }
-    size++;
-    i++;
-  }
-  i=1;
-   while( isValidCell(col-i,row))
-   {
-    if(table[col-i-1][row-1]==2 & table[col-i-1][row-1]==4)
-      break;
-    if(table[col-i-1][row-1]!=3)
-    {
-       counter++;
-    }
-    size++;
-    i++;
-  }
-  //vertically
-  i=1;
-   while(isValidCell(col,row+i))
-
-  { 
-     if( table[col-1][row+i-1]==2 & table[col-1][row+i-1]==4 )  
-      break;
-    if(table[col-1][row+i-1]!=3)
-    {
-        counter++;
-    }
-    headRow++;
-    size++;
-    i++;
-  }
-  i=1;
-   while( isValidCell(col,row-i)) 
-   {
-  if( table[col-1][row-i-1]==2 & table[col-1][row-i-1]==4 )
-    break;
-    if(table[col-1][row-i-1]!=3)
-    {
-       counter++;
-    }
-    headCol++;
-    size++;
-    i++;
-  }
-
-  if(counter>0)
-  {
-    return false;
-  }
-  else
-  { 
-    var rot=true;
-    if(headRow==row)
-      rot=true;
-    else
-      rot=false;
-
-     try
-     {markNeighborCells(headCol,headRow,rot,size,table,4);
-     }
-     catch(ex)
-     {
-      alert("second:"+ex);
-     }
-  }
- }
- function markDestroyedShipSides(isPlayer)
- {
-  if(isPlayer)//who is attacker
-  {
-  for(i=0; i<10;i++)
-  {
-    for(j=0;j<10;j++)
-    {
-      if(enemyTable[i][j]==4){
-         $("#enemyTable").children().eq(0).children().eq(i+1).children().eq(j+1).css("background-color","red");
-
-    }
-  }
-  }
-}
-  else
-  {
-    for(i=0; i<10;i++)
-  {
-    for(j=0;j<10;j++)
-    {
-      if(myTable[i][j]==4){
-         $("#myTable").children().eq(0).children().eq(i+1).children().eq(j+1).css("background-color","red");
-
-    }
-  }
-  }
- }
-}
   function generateNum()
   {
     var r=Math.random();
@@ -328,6 +218,96 @@ function ifShipDestroyed(col,row,table)
           table[col-1][row+size-1]=val;
       }
   };
+  function ifShipDestroyed(col,row,table)
+ { 
+  var counter=0;///counts survived parts of ships
+  var size=0;
+  var i=1;
+  var headCol=col;
+  var headRow=row;
+
+  //horizontally checking for ships parts
+  while(isValidCell(col+i,row))
+  {
+    if(table[col+i-1][row-1]==2 ||table[col+i-1][row-1]==4 )
+      break;
+   if(table[col+i-1][row-1]!=3)
+    {
+        counter++;
+    }
+    size++;
+    i++;
+  }
+  i=1;
+   while( isValidCell(col-i,row))
+   {
+    if(table[col-i-1][row-1]==2|| table[col-i-1][row-1]==4)
+      break;
+    if(table[col-i-1][row-1]!=3)
+    {
+       counter++;
+    }
+    headCol--;
+    size++;
+    i++;
+  }
+  //vertically
+  i=1;
+   while(isValidCell(col,row+i))
+
+  { 
+     if( table[col-1][row+i-1]==2 || table[col-1][row+i-1]==4 )  
+      break;
+    if(table[col-1][row+i-1]!=3)
+    {
+        counter++;
+    }
+    size++;
+    i++;
+  }
+  i=1;
+   while( isValidCell(col,row-i)) 
+   {
+  if( table[col-1][row-i-1]==2 || table[col-1][row-i-1]==4 )
+    break;
+    if(table[col-1][row-i-1]!=3)
+    {
+       counter++;
+    }
+    headRow--;
+    size++;
+    i++;
+  }
+
+  if(counter>0)
+  {
+    return false;
+  }
+  else
+  { 
+    var rot=true;
+    if(isValidCell(headCol+1,headRow))
+    {
+    if(table[headCol][headRow-1]==3)
+      rot=true;
+    else
+      rot=false;
+    }
+    else
+    {
+      if(isValidCell(headCol,headRow+1))
+      {
+        if(table[headCol-1][headRow]==3)
+          rot=false;
+        else
+          rot=true;
+      }
+    }
+    markNeighborCells(headCol,headRow,rot,size+1,table,4);
+    return true;
+  }
+ }
+ 
    function isFree(col,row,rot,shipSize,table)
   {
     if(rot==true)
@@ -593,6 +573,37 @@ $(document).ready(function() {
 
 
     })
+function markDestroyedShipSides(isPlayer)
+ {
+  if(isPlayer)//who is attacker
+  {
+  for(i=0; i<10;i++)
+  {
+    for(j=0;j<10;j++)
+    {
+      if(enemyTable[i][j]==4){
+         $("#enemyTable").children().eq(0).children().eq(j+1).children().eq(i+1).css("background-color","red");
+         $("#enemyTable").children().eq(0).children().eq(j+1).children().eq(i+1).data("ishover",false);
+
+         $("#enemyTable").children().eq(0).children().eq(j+1).children().eq(i+1).data("isclick",false);
+    }
+  }
+  }
+  }
+  else
+  {
+    for(i=0; i<10;i++)
+  {
+    for(j=0;j<10;j++)
+    {
+      if(myTable[i][j]==4){
+         $("#myTable").children().eq(0).children().eq(j+1).children().eq(i+1).css("background-color","red");
+
+    }
+  }
+  }
+ }
+}
     //click event of table cells
     $("#myTable td").click(function()
     {
@@ -716,7 +727,7 @@ $(document).ready(function() {
       var continueshotting=true;
         if(myTable[bestCol-1][bestRow-1]==1)
         {
-         markCell(bestCol,bestRow,true,"black");
+         markCell(bestCol,bestRow,true,"#112100");
          updateValTable(bestCol,bestRow,true)
          myTable[bestCol-1][bestRow-1]=3;
          if(ifShipDestroyed(bestCol,bestRow,myTable))
@@ -768,7 +779,7 @@ $(document).ready(function() {
             var row=getRow(this);
             if(enemyTable[col-1][row-1]==1)
             {
-              markCell(col,row,false,"black");
+              markCell(col,row,false,"#112100");
               enemyTable[col-1][row-1]=3;
               if(ifShipDestroyed(col,row,enemyTable))
                 markDestroyedShipSides(true);
