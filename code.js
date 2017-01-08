@@ -8,6 +8,13 @@ var enemyTable=new Array(10);
 for( i=0;i<10;i++)
 enemyTable[i]=new Array(10);
 
+//AI Table for computer
+var valTable=new Array(10);
+for( i=0;i<10;i++)
+valTable[i]=new Array(10);
+
+var bestCol,bestRow;
+
 //initialization of tables
 for(i=0; i<10; i++)
   for(j=0; j<10; j++)
@@ -20,6 +27,7 @@ var allocationMode=false;
 var playingMode=false;
 var rotation=true; // true -horizontal, false -vertical
 var playerTry=true;
+
 function fillTable(table)//fill zeros
 {
   for(i=0; i<10; i++)
@@ -27,6 +35,231 @@ function fillTable(table)//fill zeros
   {
     table[i][j]=0;
   }
+}
+
+function initValtable()
+{
+  for(i=0; i<5; i++)
+  {
+    for(j=0; j<5; j++)
+    {
+        valTable[i][j]=9-(Math.abs(4-i)+Math.abs(4-j));
+    }
+  }
+  for(i=5; i<10; i++)
+  {
+    for(j=5; j<10; j++)
+    {
+        valTable[i][j]=9-(Math.abs(5-i)+Math.abs(5-j));
+    }
+  }
+  for(i=0; i<5; i++)
+  {
+    for(j=5; j<10; j++)
+    {
+        valTable[i][j]=9-(Math.abs(4-i)+Math.abs(5-j));
+    }
+  }
+  for(i=5; i<10; i++)
+  {
+    for(j=0; j<5; j++)
+    {
+        valTable[i][j]=9-(Math.abs(5-i)+Math.abs(4-j));
+    }
+  }
+}
+function isShotValTable(col,row)
+{
+  if(valTable[col-1][row-1]==-1)
+    return true;
+  return false;
+}
+ function updateValTable(col,row,isShot)
+ {
+     valTable[col-1][row-1]=-1;
+    if(isShot!=true)
+    {
+   for(i=1;i<4;i++)
+   {
+      if(isValidCell(col+i,row) && !isShotValTable(col+i,row) && valTable[col+i-1][row-1]>=(4-i))
+      {
+        valTable[col+i-1][row-1]-=(4-i);
+      }
+      if(isValidCell(col-i,row) && !isShotValTable(col-i,row) && valTable[col-i-1][row-1]>=(4-i))
+      {
+        valTable[col-i-1][row-1]-=(4-i);
+      }
+      if(isValidCell(col,row+i)&&!isShotValTable(col,row+i) && valTable[col-1][row+i-1]>=(4-i))
+      {
+        valTable[col-1][row+i-1]-=(4-i);
+      }
+      if(isValidCell(col,row-i)&&!isShotValTable(col,row-i) &&  valTable[col-1][row-i-1]>=(4-i))
+      {
+        valTable[col-1][row-i-1]-=(4-i);
+      }
+   }
+  }
+  else
+  {
+    //decreasing values at the whole table
+    for(i=1; i<9;i++)
+    {
+      for(j=1;j<9; j++)
+      {
+        if(!isShotValTable(i+1,j+1))
+          if(valTable[i][j]>=1)
+        valTable[i][j]--;
+      }
+    }
+    //incresing around shotting point
+     for(i=1;i<4;i++)
+   {
+      if(isValidCell(col+i,row)&&!isShotValTable(col+i,row))
+      {
+        valTable[col+i-1][row-1]+=(4-i);
+      }
+      if(isValidCell(col-i,row)&&!isShotValTable(col-i,row))
+      {
+        valTable[col-i-1][row-1]+=(4-i);
+      }
+      if(isValidCell(col,row+i)&&!isShotValTable(col,row+i))
+      {
+        valTable[col-1][row+i-1]+=(4-i);
+      }
+      if(isValidCell(col,row-i)&&!isShotValTable(col,row-i))
+      {
+        valTable[col-1][row-i-1]+=(4-i);
+      }
+   }
+  }
+ }
+ //best point coords will be written on global variables - bestRow,bestCol
+ function generateBestpoint()
+ {
+  bestRow=1;
+  bestCol=1;
+  for(i=0; i<10;i++)
+  {
+    for(j=0;j<10; j++)
+    {
+      if(valTable[bestCol-1][bestRow-1]<valTable[i][j])
+      {
+        bestCol=i+1;
+        bestRow=j+1;
+      }
+    }
+  }
+ }
+function ifShipDestroyed(col,row,table)
+ { 
+  var counter=0;///counts survived parts of ships
+  var size=0;
+  var i=1;
+  var headCol=col;
+  var headRow=row;
+
+  //horizontally checking for ships parts
+  while(isValidCell(col+i,row))
+  {
+    if(table[col+i-1][row-1]==2 & table[col+i-1][row-1]==4 )
+      break;
+   if(table[col+i-1][row-1]!=3)
+    {
+        counter++;
+    }
+    size++;
+    i++;
+  }
+  i=1;
+   while( isValidCell(col-i,row))
+   {
+    if(table[col-i-1][row-1]==2 & table[col-i-1][row-1]==4)
+      break;
+    if(table[col-i-1][row-1]!=3)
+    {
+       counter++;
+    }
+    size++;
+    i++;
+  }
+  //vertically
+  i=1;
+   while(isValidCell(col,row+i))
+
+  { 
+     if( table[col-1][row+i-1]==2 & table[col-1][row+i-1]==4 )  
+      break;
+    if(table[col-1][row+i-1]!=3)
+    {
+        counter++;
+    }
+    headRow++;
+    size++;
+    i++;
+  }
+  i=1;
+   while( isValidCell(col,row-i)) 
+   {
+  if( table[col-1][row-i-1]==2 & table[col-1][row-i-1]==4 )
+    break;
+    if(table[col-1][row-i-1]!=3)
+    {
+       counter++;
+    }
+    headCol++;
+    size++;
+    i++;
+  }
+
+  if(counter>0)
+  {
+    return false;
+  }
+  else
+  { 
+    var rot=true;
+    if(headRow==row)
+      rot=true;
+    else
+      rot=false;
+
+     try
+     {markNeighborCells(headCol,headRow,rot,size,table,4);
+     }
+     catch(ex)
+     {
+      alert("second:"+ex);
+     }
+  }
+ }
+ function markDestroyedShipSides(isPlayer)
+ {
+  if(isPlayer)//who is attacker
+  {
+  for(i=0; i<10;i++)
+  {
+    for(j=0;j<10;j++)
+    {
+      if(enemyTable[i][j]==4){
+         $("#enemyTable").children().eq(0).children().eq(i+1).children().eq(j+1).css("background-color","red");
+
+    }
+  }
+  }
+}
+  else
+  {
+    for(i=0; i<10;i++)
+  {
+    for(j=0;j<10;j++)
+    {
+      if(myTable[i][j]==4){
+         $("#myTable").children().eq(0).children().eq(i+1).children().eq(j+1).css("background-color","red");
+
+    }
+  }
+  }
+ }
 }
   function generateNum()
   {
@@ -51,6 +284,10 @@ function fillTable(table)//fill zeros
       return 9;
     return 10;
   };
+   function isValidCell2(col,row)
+  {
+    return (col>=0 && col<=9 )&& (row>=0 && row<=9);
+  };
     function isValidCell(col,row)
   {
     return (col>=1 && col<=10 )&& (row>=1 && row<=10);
@@ -70,25 +307,25 @@ function fillTable(table)//fill zeros
         table[col-1][row+i-1]=val;
     }
   };
-  function markNeighborCells(col,row,isHoriz,size,table)
+  function markNeighborCells(col,row,isHoriz,size,table,val)
   {
       if(isHoriz==true)
       {
         if(isValidCell(col-1,row))//left to headCell
-          table[col-2][row-1]=2;
-        runOnCellsForValue(col-1,row-1,true,2,size+2,table);
-        runOnCellsForValue(col-1,row+1,true,2,size+2,table);
+          table[col-2][row-1]=val;
+        runOnCellsForValue(col-1,row-1,true,val,size+2,table);
+        runOnCellsForValue(col-1,row+1,true,val,size+2,table);
         if(isValidCell(col+size,row))//right to last cell of ship
-          table[col+size-1][row-1]=2;
+          table[col+size-1][row-1]=val;
       }
       else
       { 
         if(isValidCell(col,row-1))//top to headCell
-          table[col-1][row-2]=2;
-        runOnCellsForValue(col-1,row-1,false,2,size+2,table);
-        runOnCellsForValue(col+1,row-1,false,2,size+2,table);
+          table[col-1][row-2]=val;
+        runOnCellsForValue(col-1,row-1,false,val,size+2,table);
+        runOnCellsForValue(col+1,row-1,false,val,size+2,table);
         if(isValidCell(col,row+size))//bottom to last cell of ship
-          table[col-1][row+size-1]=2;
+          table[col-1][row+size-1]=val;
       }
   };
    function isFree(col,row,rot,shipSize,table)
@@ -144,7 +381,7 @@ function fillTable(table)//fill zeros
             {
             table[col1+j-1][row1-1]=1;
             }
-            markNeighborCells(col1,row1,true,size1,table);
+            markNeighborCells(col1,row1,true,size1,table,2);
            stop=true;
         }
        }
@@ -159,7 +396,7 @@ function fillTable(table)//fill zeros
               {
               table[col1-1][row1+j-1]=1;
               }
-              markNeighborCells(col1,row1,false,size1,table);
+              markNeighborCells(col1,row1,false,size1,table,2);
             stop=true;
           }
 
@@ -239,9 +476,10 @@ $(document).ready(function() {
         }
     }
   };
-
+  var colors=new Array(5); // to save colors for hover
   $("#myTable td").hover(function() {
-
+     if($(this).data("ishover")==true)
+     {
       if(allocationMode==true)//player allocates freelt
       {
         var opt=$(".list").val();
@@ -259,6 +497,20 @@ $(document).ready(function() {
               $(this).parent().children().eq(getCol(this)+i).css("background-color", "#25ABC4");
             
               }
+              else
+              {
+                colors[0]=$(this).css("background-color");//saves colro for mouseleave
+                $(this).css("background-color", "#FF3E34");//changes pointing cell's color
+              //changes remainimg parts for ship
+                for(i=1; i<size;i++)
+               {
+                colors[i]=$(this).parent().children().eq(getCol(this)+i).css("background-color");
+
+                $(this).parent().children().eq(getCol(this)+i).css("background-color", "#FF3E34");
+                }
+            
+              }
+
             }
           }
           else
@@ -271,15 +523,27 @@ $(document).ready(function() {
               for(i=1; i<size;i++)
               $(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color", "#25ABC4");
               }
+              else
+              {
+                colors[0]= $(this).css("background-color");
+                $(this).css("background-color", "#FF3E34");
+              for(i=1; i<size;i++)
+              {
+               colors[i]=$(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color");
+              $(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color", "#FF3E34");
+            }
+              }
             }
           }
       }
-      else if($(this).data("ishover")==true)
+      else 
         $(this).css("background-color", "#25ABC4");
+    }
 
     },
     function() {
-     
+      if($(this).data("ishover")==true)
+      {
       if(allocationMode==true)//player allocates freelt
       {
         var opt=$(".list").val();
@@ -295,6 +559,13 @@ $(document).ready(function() {
               for(i=1; i<size;i++)
               $(this).parent().children().eq(getCol(this)+i).css("background-color", "#73CEDF");
               }
+              else
+              {
+                $(this).css("background-color", colors[0]);
+              for(i=1; i<size;i++)
+              $(this).parent().children().eq(getCol(this)+i).css("background-color", colors[i]);
+              }
+
             }
           }
           else
@@ -307,11 +578,18 @@ $(document).ready(function() {
               for(i=1; i<size;i++)
               $(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color", "#73CEDF");
               }
+              else
+              {
+              $(this).css("background-color", colors[0]);
+              for(i=1; i<size;i++)
+              $(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color", colors[i]);
+              }
             }
           }
       }
-      else if($(this).data("ishover")==true)
+      else 
         $(this).css("background-color", "#73CEDF");
+    }
 
 
     })
@@ -347,7 +625,7 @@ $(document).ready(function() {
                 
                 myTable[getCol(this)+i-1][getRow(this)-1]=1;
               }
-              markNeighborCells(getCol(this),getRow(this),true,size,myTable);
+              markNeighborCells(getCol(this),getRow(this),true,size,myTable,2);
             }
 
             }
@@ -371,7 +649,7 @@ $(document).ready(function() {
                 $(this).parent().parent().children().eq(getRow(this)+i).children().eq(getCol(this)).css("background-color", "gray");
                 myTable[getCol(this)-1][getRow(this)-i+1]=1;
               }
-              markNeighborCells(getCol(this),getRow(this),false,size,myTable);
+              markNeighborCells(getCol(this),getRow(this),false,size,myTable,2);
             }
             }
           }
@@ -431,25 +709,29 @@ $(document).ready(function() {
           $("#textDiv").html("<span>Your are the winner!<br>Congratulations!</span>");
         }
     }
+
     function computerTry()
     {
-      var col=generateNum();
-      var row=generateNum();
-      var continueShotting=true;
-        if(myTable[col-1][row-1]==1)
+      generateBestpoint();
+      var continueshotting=true;
+        if(myTable[bestCol-1][bestRow-1]==1)
         {
-         markCell(col,row,true,"black");
-         myTable[col-1][row-1]=3;
+         markCell(bestCol,bestRow,true,"black");
+         updateValTable(bestCol,bestRow,true)
+         myTable[bestCol-1][bestRow-1]=3;
+         if(ifShipDestroyed(bestCol,bestRow,myTable))
+                markDestroyedShipSides(false);
         }
         else
         {
-         if(myTable[col-1][row-1]==0 || myTable[col-1][row-1]==2 )
+          updateValTable(bestCol,bestRow,false);
+         if(myTable[bestCol-1][bestRow-1]==0 || myTable[bestCol-1][bestRow-1]==2 )
         {
-          markCell(col,row,true,"red");
-          continueShotting=false;
+          markCell(bestCol,bestRow,true,"red");
+          continueshotting=false;
         }
        }
-      return continueShotting;
+      return continueshotting;
     }
    /* function sleep(ms) 
     {
@@ -459,7 +741,7 @@ $(document).ready(function() {
     var waitUntil = new Date().getTime() + seconds*1000;
     while(new Date().getTime() < waitUntil) true;
   }
-     function computerTries()
+    async function computerTries()
     {
       if(playerTry==false)
       {
@@ -467,7 +749,7 @@ $(document).ready(function() {
             while(continueShotting==true)
             {     
              continueShotting=computerTry();
-             sleep(0.5);
+           //  sleep(0.5);
              checkIfWins();
             }
             playerTry=true;
@@ -488,6 +770,8 @@ $(document).ready(function() {
             {
               markCell(col,row,false,"black");
               enemyTable[col-1][row-1]=3;
+              if(ifShipDestroyed(col,row,enemyTable))
+                markDestroyedShipSides(true);
               checkIfWins();
             }
             else
@@ -501,7 +785,7 @@ $(document).ready(function() {
           }
       }
     }
-    
+
     });
 
     $("#rotate").click(function(){
@@ -512,6 +796,7 @@ $(document).ready(function() {
     })
  //start button's click event
   $("#startButton").click(function() {
+    initValtable();
 
     $("#textDiv").html("<span>Please, allocate your fleet</span>");
     $("#rotate").css("visibility", "visible");
@@ -564,6 +849,7 @@ $(document).ready(function() {
     if(allocationMode==true)
     {
       fillTable(myTable);
+    $("#myTable td").css("background-color","#73CEDF");
       autoAllocation(myTable);
       visualiseTable(true);
       prepareGame();
