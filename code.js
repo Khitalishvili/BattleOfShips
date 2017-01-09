@@ -258,6 +258,10 @@ $(document).ready(function() {
     $("#myTable td").data('ishover', false);
     $("#rotate").attr("disabled", true);
     $("#auto").attr("disabled", true);
+    /*for(i=0; i<10; i++)
+    {
+      document.write(myTable[i]+"<br>");
+    }*/
     var list = document.getElementsByClassName("list")[0];
     list.parentNode.removeChild(list);
     allocationMode = false;
@@ -573,7 +577,7 @@ $(document).ready(function() {
             for (i = 1; i < size; i++) {
               $(this).parent().parent().children().eq(getRow(this) + i).children().eq(getCol(this)).data("ishover", false);
               $(this).parent().parent().children().eq(getRow(this) + i).children().eq(getCol(this)).css("background-color", "gray");
-              myTable[getCol(this) - 1][getRow(this) - i + 1] = 1;
+              myTable[getCol(this) - 1][getRow(this) + i -1] = 1;
             }
             markNeighborCells(getCol(this), getRow(this), false, size, myTable, 2);
           }
@@ -638,7 +642,7 @@ $(document).ready(function() {
       alert.css("font-size", "40px");
       alert.css("text-shadow", "0px 0px 50px black")
       $("body").append(alert);
-      alert.fadeIn(7000).css("color", "#FF8900").fadeOut(4000, reset());
+      alert.fadeIn(7000).css("color", "#FF8900").fadeOut(4000, reset);
     }
   }
 
@@ -660,15 +664,7 @@ $(document).ready(function() {
     }
     return continueshotting;
   }
-  /* function sleep(ms) 
-    {
-  return new Promise(resolve => setTimeout(resolve, ms));
-   }*/
-  function sleep(seconds) {
-    var waitUntil = new Date().getTime() + seconds * 1000;
-    while (new Date().getTime() < waitUntil) true;
-  }
-  async function computerTries() {
+   function computerTries() {
     if (playerTry == false) {
       var continueShotting = true;
         continueShotting=computerTry();
