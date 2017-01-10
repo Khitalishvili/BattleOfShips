@@ -8,12 +8,12 @@ var enemyTable = new Array(10);
 for (i = 0; i < 10; i++)
   enemyTable[i] = new Array(10);
 
-//AI Table for computer
+//values' table that is used for AI processing
 var valTable = new Array(10);
 for (i = 0; i < 10; i++)
   valTable[i] = new Array(10);
 
-var bestCol, bestRow;
+var bestCol, bestRow;// position for computer's choice
 
 //initialization of tables
 for (i = 0; i < 10; i++)
@@ -26,8 +26,9 @@ var allocationMode = false;
 var playingMode = false;
 var rotation = true; // true -horizontal, false -vertical
 var playerTry = true;
-var intervalIndex;
+var intervalIndex; 
 
+//fills given table with 0s
 function fillTable(table) //fill zeros
 {
   for (i = 0; i < 10; i++)
@@ -35,7 +36,7 @@ function fillTable(table) //fill zeros
       table[i][j] = 0;
     }
 }
-
+//initialize ValTable(values' table)
 function initValtable() {
   for (i = 0; i < 5; i++) {
     for (j = 0; j < 5; j++) {
@@ -58,13 +59,13 @@ function initValtable() {
     }
   }
 }
-
+//checks if  there is shot at the given point on values' table
 function isShotValTable(col, row) {
   if (valTable[col - 1][row - 1] == -1)
     return true;
   return false;
 }
-
+//updates values' table
 function updateValTable(col, row, isShot) {
   valTable[col - 1][row - 1] = -1;
   if (isShot != true) {
@@ -121,7 +122,7 @@ function generateBestpoint() {
     }
   }
 }
-
+//geneate index of position 1-10
 function generateNum() {
   var r = Math.random();
   if (r < 0.1)
@@ -144,15 +145,15 @@ function generateNum() {
     return 9;
   return 10;
 };
-
+//validate indexes column and rows for table presented as  an array of arrays
 function isValidCell2(col, row) {
   return (col >= 0 && col <= 9) && (row >= 0 && row <= 9);
 };
-
+//validate indexes column and rows for the visual table
 function isValidCell(col, row) {
   return (col >= 1 && col <= 10) && (row >= 1 && row <= 10);
 };
-
+//run from a cell to specified direction on a given table and write values on them.
 function runOnCellsForValue(col, row, isHoriz, val, length, table) // start point(col,row) ,is Horiz-direction, val -value, run's length
 {
   if (isHoriz == true) {
@@ -165,7 +166,8 @@ function runOnCellsForValue(col, row, isHoriz, val, length, table) // start poin
         table[col - 1][row + i - 1] = val;
   }
 };
-
+//marks neighboring cells for given ship(that is presented headcell - col, row, isHoriz true or false and size)
+//with wanted value
 function markNeighborCells(col, row, isHoriz, size, table, val) {
   if (isHoriz == true) {
     if (isValidCell(col - 1, row)) //left to headCell
@@ -249,19 +251,15 @@ function autoAllocation(table) {
 
 //Functions implemented using JQuery
 $(document).ready(function() {
-
-  $("table td").data("ishover", true);
-  $('table td').data("isclick", true);
-
+  //initialize datas for table cells
+  $("table td").data("ishover", true); //ishover is enabled for all the cells
+  $('table td').data("isclick", true); //isclick is enabled for all the cells
+//prepares starting games after allocation of ships
   function prepareGame() {
     $("#myTable td").data('isclick', false);
     $("#myTable td").data('ishover', false);
     $("#rotate").attr("disabled", true);
     $("#auto").attr("disabled", true);
-    /*for(i=0; i<10; i++)
-    {
-      document.write(myTable[i]+"<br>");
-    }*/
     var list = document.getElementsByClassName("list")[0];
     list.parentNode.removeChild(list);
     allocationMode = false;
@@ -269,8 +267,9 @@ $(document).ready(function() {
     $("#textDiv").html("<span>Computer allocates its fleet.<br>Please, wait.</span>");
     autoAllocation(enemyTable);
     $("#textDiv").html("<span>Computer finished allocation of its fleet<br> Now you can attack!</span>");
+    $("#Ctablediv").css("box-shadow"," 0px 0px 10px 5px yellow");
   }
-
+ 
   function getCol(td) {
 
     var column_num = parseInt($(td).index());
@@ -618,6 +617,7 @@ $(document).ready(function() {
     }
     return true;
   }
+  function disapearWinningText(alert){alert.fadeOut(3000, reset)};
 
   function checkIfWins() {
     var winner = false;
@@ -639,10 +639,11 @@ $(document).ready(function() {
       ypos = (2 * $("#myTable").position().top + $("#enemyTable").position().top) / 2;
       alert.css("top", ypos);
       alert.css("left", xpos);
+      alert.css("color", "#FF8900");
       alert.css("font-size", "40px");
-      alert.css("text-shadow", "0px 0px 50px black")
+      alert.css("text-shadow", "0px 0px 5px black")
       $("body").append(alert);
-      alert.fadeIn(7000).css("color", "#FF8900").fadeOut(4000, reset);
+      alert.fadeIn(3000,setTimeout(3000,disapearWinningText(alert)));
     }
   }
 
@@ -664,18 +665,26 @@ $(document).ready(function() {
     }
     return continueshotting;
   }
-   function computerTries() {
-    if (playerTry == false) {
-      var continueShotting = true;
+  function computerTries2()
+  {
+  var continueShotting = true;
         continueShotting=computerTry();
-        //  sleep(0.5);
         checkIfWins();
         if(continueShotting==false)
          {
           clearInterval(intervalIndex);
           playerTry = true;
+          $("#tablediv").css("box-shadow"," 0px 0px 10px 5px #014451").promise().done(function(){
+            $("#Ctablediv").css("box-shadow"," 0px 0px 10px 5px yellow").promise();
+          });
          }
-      }
+  }
+
+   function computerTries() {
+    if (playerTry == false) {
+      $("#tablediv").css("box-shadow"," 0px 0px 10px 5px yellow").promise().done(computerTries2);
+
+        }
   }
   $("#enemyTable td").click(function() {
     if ($(this).data("isclick") != false) {
@@ -697,7 +706,14 @@ $(document).ready(function() {
           }
           $(this).data('ishover', false);
           $(this).data('isclick', false);
+          if(playerTry==false)
+          {
+          $("#Ctablediv").css("box-shadow"," 0px 0px 10px 5px #014451").promise().done(function(){
+                      $("#tablediv").css("box-shadow"," 0px 0px 10px 5px yellow").promise();
+
+          });
           intervalIndex=setInterval(computerTries,3000);
+          }
         }
       }
     }
@@ -785,8 +801,11 @@ $(document).ready(function() {
     $("#auto").css("visibility", "hidden");
     $("#textDiv").html("");
     $("#ships").html("");
+    $("#Ctablediv").css("box-shadow"," 0px 0px 10px 5px #014451");
+    $("#tablediv").css("box-shadow"," 0px 0px 10px 5px #014451").promise();
     fillTable(myTable);
     fillTable(enemyTable);
+    initValtable();
   }
   $("#resetButton").click(function() {
     reset();
